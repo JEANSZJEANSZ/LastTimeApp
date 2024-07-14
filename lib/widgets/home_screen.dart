@@ -18,6 +18,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   late List<TimerBloc> _timerBlocs = [];
 
+  List<Map<String, dynamic>> _history = [];
+
   List<Map<String, dynamic>> _tasks = [];
 
   @override
@@ -74,12 +76,20 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: _tasks.map((task) {
                     return GestureDetector(
                       onTap: () {
-                        if (task['Title'] != null) {
+                        if (task['title'] != null) {
+                          setState(() {
+                            _history.add({
+                              "title": task['title'],
+                              "timestamp": DateTime.now().toString(),
+                            });
+                          });
                           Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      HistoryPage(title: task['Title'], timestamp: DateTime.now(),)));
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  HistoryPage(history: _history),
+                            ),
+                          );
                         }
                       },
                       child: SizedBox(
@@ -185,7 +195,8 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const HistoryPage()),
+                MaterialPageRoute(
+                    builder: (context) => HistoryPage(history: _history)),
               );
             },
             child: const Text('Show History'),
