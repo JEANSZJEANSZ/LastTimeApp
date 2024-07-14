@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:last_time_app/bloc/timer_bloc.dart';
+import 'package:last_time_app/ticker.dart';
 
 class NewSchedulePage extends StatefulWidget {
   @override
-  // ignore: library_private_types_in_public_api
   _NewSchedulePageState createState() => _NewSchedulePageState();
 }
 
@@ -10,6 +11,13 @@ class _NewSchedulePageState extends State<NewSchedulePage> {
   final _formKey = GlobalKey<FormState>();
   String _title = '';
   int _remainingTime = 0;
+  late TimerBloc _timerBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _timerBloc = TimerBloc(ticker: Ticker());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,24 +39,25 @@ class _NewSchedulePageState extends State<NewSchedulePage> {
                   }
                   return null;
                 },
-                onSaved: (value) => _title = value??'',
+                onSaved: (value) => _title = value ?? '',
               ),
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Remaining Time'),
                 validator: (value) {
-                  if (value == null || value.isEmpty || int.tryParse(value) == null) {
+                  if (value == null ||
+                      value.isEmpty ||
+                      int.tryParse(value) == null) {
                     return 'Please enter a valid remaining time';
                   }
                   return null;
                 },
                 onSaved: (value) {
-                  if (value != null && value.isNotEmpty){
+                  if (value != null && value.isNotEmpty) {
                     _remainingTime = int.parse(value);
                   } else {
                     _remainingTime = 0;
                   }
                 },
-
               ),
               const SizedBox(height: 20),
               ElevatedButton(
@@ -56,9 +65,15 @@ class _NewSchedulePageState extends State<NewSchedulePage> {
                   if (_formKey.currentState?.validate() ?? false) {
                     _formKey.currentState?.save();
                     if (_remainingTime > 0) {
-                      Navigator.pop(context, {'title': _title, 'remainingTime': _remainingTime});
-                    }else {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please enter a valid remaining')));
+                      Navigator.pop(context, {
+                        'title': _title,
+                        'remainingTime': _remainingTime,
+                        'timerBloc': _timerBloc
+                      });
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content:
+                              Text('Please enter a valid remaining time')));
                     }
                   }
                 },
