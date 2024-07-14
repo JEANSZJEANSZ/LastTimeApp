@@ -1,10 +1,8 @@
-import 'dart:convert';
-
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:last_time_app/bloc/timer_bloc.dart';
 import 'package:last_time_app/ticker.dart';
+import 'package:last_time_app/widgets/history_page.dart';
 import 'package:last_time_app/widgets/new_schedule_page.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -50,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              fontFamily: 'Pacifica', // stylish font
+              fontFamily: 'Pacifica',
             ),
           ),
         ),
@@ -74,75 +72,83 @@ class _HomeScreenState extends State<HomeScreen> {
               ? const Center(child: Text('No tasks'))
               : Column(
                   children: _tasks.map((task) {
-                    return SizedBox(
-                      height: 100,
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Colors.blue.shade500.withOpacity(
-                                    (task["remainingTime"] / 60).toDouble()),
-                                Colors.red.shade500.withOpacity(
-                                    (1 - task["remainingTime"] / 60)
-                                        .toDouble()),
-                              ],
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: AutoSizeText(
-                                    task["title"],
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.blue,
-                                    ),
+                    return GestureDetector(
+                      onTap: () {
+                        if (task['Title'] != null) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      HistoryPage(title: task['Title'], timestamp: DateTime.now(),)));
+                        }
+                      },
+                      child: SizedBox(
+                        height: 100,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: BlocBuilder<TimerBloc, TimerState>(
+                            bloc: task["timerBloc"],
+                            builder: (context, state) {
+                              return Container(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Colors.blue.shade500.withOpacity(
+                                          (state.duration / 60)
+                                              .clamp(0.0, 1.0)
+                                              .toDouble()),
+                                      Colors.red.shade500.withOpacity(
+                                          (1 - state.duration / 60)
+                                              .clamp(0.0, 1.0)
+                                              .toDouble()),
+                                    ],
                                   ),
                                 ),
-                                CircleAvatar(
-                                  backgroundColor:
-                                      Color.fromARGB(255, 57, 191, 231),
-                                  child: BlocBuilder<TimerBloc, TimerState>(
-                                    bloc: task["timerBloc"],
-                                    builder: (context, state) {
-                                      if (state is TimerRunInProgress) {
-                                        return AutoSizeText(
-                                          state.duration.toString(),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          task["title"],
                                           style: const TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold),
-                                        );
-                                      } else {
-                                        return const AutoSizeText(
-                                          '0',
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color.fromARGB(
+                                                255, 164, 231, 203),
+                                          ),
+                                        ),
+                                      ),
+                                      CircleAvatar(
+                                        backgroundColor:
+                                            Color.fromARGB(255, 134, 221, 185),
+                                        child: Text(
+                                          state.duration.toString(),
                                           style: const TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
                                           ),
-                                        );
-                                      }
-                                    },
+                                        ),
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(Icons.delete),
+                                        onPressed: () {
+                                          setState(() {
+                                            _tasks.remove(task);
+                                            _timerBlocs
+                                                .remove(task["timerBloc"]);
+                                          });
+                                        },
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                IconButton(
-                                  icon: const Icon(Icons.delete),
-                                  onPressed: () {
-                                    setState(() {
-                                      _tasks.remove(task);
-                                      _timerBlocs.remove(task["timerBloc"]);
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
+                              );
+                            },
                           ),
                         ),
                       ),
@@ -172,6 +178,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
                 child: const Icon(Icons.add)),
           ),
+          const SizedBox(
+            height: 20,
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const HistoryPage()),
+              );
+            },
+            child: const Text('Show History'),
+          )
         ],
       ),
     );
