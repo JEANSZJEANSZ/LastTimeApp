@@ -25,6 +25,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    _sortTasks();
+  }
+
+  void _sortTasks() {
+    _tasks.sort((a, b) => a["remainingTime"].compareTo(b["remainingTime"]));
   }
 
   @override
@@ -83,6 +88,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               "timestamp": DateTime.now().toString(),
                             });
                           });
+                          task["timerBloc"].add(TimerReset(
+                              OriginalDuration: task["remainingTime"]));
                           Navigator.push(
                             context,
                             MaterialPageRoute(
