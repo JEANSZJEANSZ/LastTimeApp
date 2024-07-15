@@ -9,6 +9,7 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _HomeScreenState createState() => _HomeScreenState();
 }
 
@@ -16,11 +17,11 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isAscending = true;
   IconData _filterIcon = Icons.filter_list;
 
-  late List<TimerBloc> _timerBlocs = [];
+  late final List<TimerBloc> _timerBlocs = [];
 
-  List<Map<String, dynamic>> _history = [];
+  final List<Map<String, dynamic>> _history = [];
 
-  List<Map<String, dynamic>> _tasks = [];
+  final List<Map<String, dynamic>> _tasks = [];
 
   @override
   void initState() {
@@ -142,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                       CircleAvatar(
                                         backgroundColor:
-                                            Color.fromARGB(255, 134, 221, 185),
+                                            const Color.fromARGB(255, 134, 221, 185),
                                         child: Text(
                                           state.duration.toString(),
                                           style: const TextStyle(
@@ -180,7 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     MaterialPageRoute(builder: (context) => NewSchedulePage()),
                   );
                   if (result != null) {
-                    final timerBloc = TimerBloc(ticker: Ticker());
+                    final timerBloc = TimerBloc(ticker: const Ticker());
                     setState(() {
                       _tasks.add({
                         "title": result["title"],

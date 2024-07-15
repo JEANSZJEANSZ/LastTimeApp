@@ -6,6 +6,7 @@ class HistoryPage extends StatefulWidget {
   const HistoryPage({required this.history, super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _HistoryPageState createState() => _HistoryPageState();
 }
 
@@ -35,11 +36,11 @@ class _HistoryPageState extends State<HistoryPage> {
                   child: ListTile(
                     title: Text(
                       widget.history[index]['title'],
-                      style: TextStyle(fontSize: 18),
+                      style: const TextStyle(fontSize: 18),
                     ),
                     subtitle: Text(
                       widget.history[index]['timestamp'].toString(),
-                      style: TextStyle(fontSize: 14, color: Colors.grey),
+                      style: const TextStyle(fontSize: 14, color: Colors.grey),
                     ),
                   ),
                 );

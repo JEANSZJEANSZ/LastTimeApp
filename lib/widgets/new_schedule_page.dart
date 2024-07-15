@@ -4,6 +4,7 @@ import 'package:last_time_app/ticker.dart';
 
 class NewSchedulePage extends StatefulWidget {
   @override
+  // ignore: library_private_types_in_public_api
   _NewSchedulePageState createState() => _NewSchedulePageState();
 }
 
@@ -16,7 +17,7 @@ class _NewSchedulePageState extends State<NewSchedulePage> {
   @override
   void initState() {
     super.initState();
-    _timerBloc = TimerBloc(ticker: Ticker());
+    _timerBloc = TimerBloc(ticker: const Ticker());
   }
 
   @override
